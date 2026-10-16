@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0d12">
+  <meta name="description" content="Личная визитка и навыки специалиста.">
+  <title>Алексей Березин — визитка</title>
+
+  <style>
+    /* Базовые настройки */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d12;
+      --card: #131720;
+      --text: #f3f4f6;
+      --muted: #969eae;
+      --accent: #8b5cf6;
+      --border: #252b38;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          #21183d 0,
+          transparent 42%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Карточка */
+    .profile {
+      width: 100%;
+      max-width: 440px;
+      padding: 40px 32px;
+      text-align: center;
+      background: rgba(19, 23, 32, 0.94);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      animation: appear 0.6s ease both;
+    }
+
+    .avatar {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 2px solid #a78bfa;
+      background: linear-gradient(135deg, #312e81, #7c3aed);
+      color: white;
+      font-size: 42px;
+      font-weight: 700;
+      box-shadow: 0 0 35px rgba(139, 92, 246, 0.2);
+    }
+
+    .eyebrow {
+      margin-bottom: 10px;
+      color: #a78bfa;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: clamp(28px, 6vw, 36px);
+      letter-spacing: -1px;
+    }
+
+    .description {
+      max-width: 320px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* Навыки */
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      list-style: none;
+    }
+
+    .skills li {
+      padding: 10px 14px;
+      color: #ddd6fe;
+      background: #211b35;
+      border: 1px solid #393052;
+      border-radius: 10px;
+      font-size: 13px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .skills li:hover {
+      transform: translateY(-3px);
+      background: #30234c;
+    }
+
+    /* Кнопка связи */
+    .contact {
+      display: block;
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .contact:hover {
+      transform: translateY(-2px);
+      background: #7c3aed;
+    }
+
+    .contact:focus-visible {
+      outline: 3px solid #c4b5fd;
+      outline-offset: 4px;
+    }
+
+    .footer {
+      margin-top: 24px;
+      color: #697386;
+      font-size: 12px;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Адаптация для телефонов */
+    @media (max-width: 480px) {
+      body {
+        padding: 16px;
+      }
+
+      .profile {
+        padding: 32px 22px;
+        border-radius: 20px;
+      }
+
+      .avatar {
+        width: 96px;
+        height: 96px;
+        font-size: 36px;
+      }
+
+      .description {
+        font-size: 14px;
+      }
+
+      .skills {
+        gap: 8px;
+      }
+
+      .skills li {
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="profile">
+    <!-- Заглушка вместо фотографии. Буква ставится автоматически из имени -->
+    <div class="avatar" id="avatar" role="img" aria-label="Аватар"></div>
+
+    <p class="eyebrow">Личная визитка</p>
+
+    <h1 id="name">Алексей Березин</h1>
+
+    <p class="description" id="description">
+      Создаю цифровые решения, люблю современные технологии
+      и превращаю идеи в работающие проекты.
+    </p>
+
+    <ul class="skills" aria-label="Мои навыки">
+      <li>HTML / CSS</li>
+      <li>JavaScript</li>
+      <li>UI / UX дизайн</li>
+    </ul>
+
+    <a class="contact" id="contact" href="mailto:hello@example.com">
+      Связаться
+    </a>
+
+    <p class="footer">
+      <span id="year"></span> · Открыт к интересным проектам
+    </p>
+  </main>
+
+  <script>
+    // 1. Год в футере обновляется автоматически
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+
+    // 2. Первая буква имени для аватара — берём прямо из <h1>,
+    //    чтобы не дублировать имя в двух местах
+    const nameText = document.getElementById("name").textContent.trim();
+    document.getElementById("avatar").textContent =
+      nameText.charAt(0).toUpperCase();
+  </script>
+</body>
+</html>
