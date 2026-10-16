@@ -16,7 +16,18 @@
       --gray: #969eae;
       --border: #252b38;
     }
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
 
+.task-text.done {
+  text-decoration: line-through;
+  color: var(--gray);
+}
     * {
       box-sizing: border-box;
     }
@@ -108,10 +119,11 @@
       overflow-wrap: anywhere;
     }
 
-    .task-text {
-      min-width: 0;
-      line-height: 1.5;
-    }
+  .task-text {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.5;
+}
 
     .delete-button {
       flex-shrink: 0;
@@ -192,14 +204,17 @@
 
     // Сохраняет текущий список задач
     function saveTasks() {
-      const tasks = Array.from(
-        taskList.querySelectorAll(".task-text")
-      ).map(function (task) {
-        return task.textContent;
-      });
+  const tasks = Array.from(
+    taskList.querySelectorAll(".task-item")
+  ).map(function (item) {
+    const text = item.querySelector(".task-text").textContent;
+    const checkbox = item.querySelector(".task-checkbox");
+    const done = checkbox ? checkbox.checked : false;
+    return { text: text, done: done };
+  });
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
 
     // Обновляет сообщение, если список пуст
     function updateEmptyMessage() {
@@ -207,79 +222,91 @@
     }
 
     // Создаёт элемент задачи и кнопку удаления
-    function renderTask(taskText) {
-      const listItem = document.createElement("li");
-      listItem.className = "task-item";
+    function renderTask(task) {
+  const listItem = document.createElement("li");
+  listItem.className = "task-item";
 
-      const text = document.createElement("span");
-      text.className = "task-text";
-      text.textContent = taskText;
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.className = "task-checkbox";
+  checkbox.checked = task.done;
 
-      const deleteButton = document.createElement("button");
-      deleteButton.className = "delete-button";
-      deleteButton.type = "button";
-      deleteButton.textContent = "Удалить";
-      deleteButton.setAttribute(
-        "aria-label",
-        "Удалить задачу: " + taskText
-      );
+  const text = document.createElement("span");
+  text.className = "task-text";
+  text.textContent = task.text;
 
-      // Удаляем задачу и сохраняем изменения
-      deleteButton.addEventListener("click", function () {
-        listItem.remove();
-        saveTasks();
-        updateEmptyMessage();
-      });
+  if (task.done) {
+    text.classList.add("done");
+  }
 
-      listItem.append(text, deleteButton);
-      taskList.appendChild(listItem);
+  checkbox.addEventListener("change", function () {
+    if (checkbox.checked) {
+      text.classList.add("done");
+    } else {
+      text.classList.remove("done");
     }
+    saveTasks();
+  });
+
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "delete-button";
+  deleteButton.type = "button";
+  deleteButton.textContent = "Удалить";
+  deleteButton.setAttribute("aria-label", "Удалить задачу: " + task.text);
+
+  deleteButton.addEventListener("click", function () {
+    listItem.remove();
+    saveTasks();
+    updateEmptyMessage();
+  });
+
+  listItem.append(checkbox, text, deleteButton);
+  taskList.appendChild(listItem);
+}
 
     // Добавляет новую задачу
-    function addTask() {
-      const taskText = taskInput.value.trim();
+  function addTask() {
+  const taskText = taskInput.value.trim();
 
-      // Не добавляем пустую задачу
-      if (taskText === "") {
-        taskInput.focus();
-        return;
-      }
+  if (taskText === "") {
+    taskInput.focus();
+    return;
+  }
 
-      renderTask(taskText);
+  renderTask({ text: taskText, done: false });
 
-      // Сохраняем список после добавления
-      saveTasks();
-
-      // Очищаем поле и возвращаем фокус
-      taskInput.value = "";
-      taskInput.focus();
-
-      updateEmptyMessage();
-    }
+  saveTasks();
+  taskInput.value = "";
+  taskInput.focus();
+  updateEmptyMessage();
+}
 
     // Загружает сохранённые задачи
-    function loadTasks() {
-      const savedTasks = localStorage.getItem(STORAGE_KEY);
+   function loadTasks() {
+  const savedTasks = localStorage.getItem(STORAGE_KEY);
 
-      if (savedTasks) {
-        try {
-          const tasks = JSON.parse(savedTasks);
+  if (savedTasks) {
+    try {
+      const tasks = JSON.parse(savedTasks);
 
-          if (Array.isArray(tasks)) {
-            tasks.forEach(function (task) {
-              if (typeof task === "string" && task.trim() !== "") {
-                renderTask(task);
-              }
-            });
+      if (Array.isArray(tasks)) {
+        tasks.forEach(function (task) {
+          if (
+            task &&
+            typeof task.text === "string" &&
+            task.text.trim() !== ""
+          ) {
+            renderTask(task);
           }
-        } catch (error) {
-          // Если данные повреждены, начинаем с пустого списка
-          localStorage.removeItem(STORAGE_KEY);
-        }
+        });
       }
-
-      updateEmptyMessage();
+    } catch (error) {
+      localStorage.removeItem(STORAGE_KEY);
     }
+  }
+
+  updateEmptyMessage();
+}
 
     // Submit срабатывает и по кнопке, и по Enter
     taskForm.addEventListener("submit", function (event) {
