@@ -131,8 +131,24 @@
       color: #fca5a5;
     }
 
-    .delete-button:hover {
+      .delete-button:hover {
       background: #45232b;
+    }
+
+    .clear-button {
+      margin-top: 12px;
+      width: 100%;
+      background: #29202a;
+      color: #fca5a5;
+    }
+
+    .clear-button:hover {
+      background: #45232b;
+    }
+    .task-counter {
+      margin: 20px 0 0;
+      color: var(--gray);
+      font-size: 14px;
     }
 
     .empty-message {
@@ -187,6 +203,10 @@
     </form>
 
     <ul class="task-list" id="taskList"></ul>
+    <p class="task-counter" id="taskCounter">Осталось задач: 0</p>
+    <button class="clear-button" id="clearDoneBtn" type="button">
+  Очистить выполненные
+</button>
 
     <p class="empty-message" id="emptyMessage">
       Пока задач нет. Добавьте первую!
@@ -220,6 +240,14 @@
     function updateEmptyMessage() {
       emptyMessage.hidden = taskList.children.length > 0;
     }
+    // Обновляет счётчик оставшихся задач
+    function updateCounter() {
+      const total = taskList.querySelectorAll(".task-item").length;
+      const done = taskList.querySelectorAll(".task-text.done").length;
+      const left = total - done;
+
+      document.getElementById("taskCounter").textContent = "Осталось задач: " + left;
+    }
 
     // Создаёт элемент задачи и кнопку удаления
     function renderTask(task) {
@@ -245,6 +273,7 @@
     } else {
       text.classList.remove("done");
     }
+    updateCounter();
     saveTasks();
   });
 
@@ -258,6 +287,7 @@
     listItem.remove();
     saveTasks();
     updateEmptyMessage();
+    updateCounter();
   });
 
   listItem.append(checkbox, text, deleteButton);
@@ -279,6 +309,7 @@
   taskInput.value = "";
   taskInput.focus();
   updateEmptyMessage();
+  updateCounter();
 }
 
     // Загружает сохранённые задачи
@@ -306,12 +337,30 @@
   }
 
   updateEmptyMessage();
+  updateCounter();
 }
 
     // Submit срабатывает и по кнопке, и по Enter
     taskForm.addEventListener("submit", function (event) {
       event.preventDefault();
       addTask();
+    });
+    // Очищает все выполненные задачи
+    const clearDoneBtn = document.getElementById("clearDoneBtn");
+
+    clearDoneBtn.addEventListener("click", function () {
+      const allTasks = taskList.querySelectorAll(".task-item");
+
+      allTasks.forEach(function (item) {
+        const checkbox = item.querySelector(".task-checkbox");
+        if (checkbox && checkbox.checked) {
+          item.remove();
+        }
+      });
+
+      saveTasks();
+      updateEmptyMessage();
+      updateCounter();
     });
 
     // Загружаем задачи при открытии страницы
